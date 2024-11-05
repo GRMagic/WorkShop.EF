@@ -1,6 +1,8 @@
 ﻿using var context = new EscolaContext();
 
-context.Database.EnsureCreated();
+context.Database.EnsureDeleted();
+
+//context.Database.EnsureCreated();
 
 context.Database.Migrate();
 
@@ -24,20 +26,41 @@ foreach (var estudante in estudantes)
 
 // Atualização de um estudante
 
-estudantes[0].Nome = "Ciclano";
+estudantes[0].Nome = "Sicrano";
 
 context.SaveChanges();
 
 // Busca de um estudante
 
-var ciclano = context.Estudantes.First(e => e.Nome == "Ciclano");
+var sicrano = context.Estudantes.First(e => e.Nome == "Sicrano");
 
-Console.WriteLine($"Id: {ciclano.Id}, Nome: {ciclano.Nome} {ciclano.Sobrenome}");
+Console.WriteLine($"Id: {sicrano.Id}, Nome: {sicrano.Nome} {sicrano.Sobrenome}");
 
 // Remoção de um estudante
 
-context.Estudantes.Remove(ciclano);
+context.Estudantes.Remove(sicrano);
 
 context.SaveChanges();
 
 
+// Inclusão de um estudante duplicado
+try
+{
+    var beltrano = new Estudante()
+    {
+        Nome = "Beltrano",
+        Sobrenome = "De Tal",
+    };
+    context.Estudantes.Add(beltrano);
+    var duplicado = new Estudante()
+    {
+        Nome = "Beltrano",
+        Sobrenome = "De Tal",
+    };
+    context.Estudantes.Add(duplicado);
+    context.SaveChanges();
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
