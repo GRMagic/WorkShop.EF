@@ -44,23 +44,50 @@ context.SaveChanges();
 
 
 // Inclusão de um estudante duplicado
-try
+//try
+//{
+//    var beltrano = new Estudante()
+//    {
+//        Nome = "Beltrano",
+//        Sobrenome = "De Tal",
+//    };
+//    context.Estudantes.Add(beltrano);
+//    var duplicado = new Estudante()
+//    {
+//        Nome = "Beltrano",
+//        Sobrenome = "De Tal",
+//    };
+//    context.Estudantes.Add(duplicado);
+//    context.SaveChanges();
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine(ex.Message);
+//}
+
+// Exemplo inclusão de várias entidades usando um comando só
+
+var curso = new Curso()
 {
-    var beltrano = new Estudante()
-    {
-        Nome = "Beltrano",
-        Sobrenome = "De Tal",
-    };
-    context.Estudantes.Add(beltrano);
-    var duplicado = new Estudante()
-    {
-        Nome = "Beltrano",
-        Sobrenome = "De Tal",
-    };
-    context.Estudantes.Add(duplicado);
-    context.SaveChanges();
-}
-catch (Exception ex)
+    Nome = "Workshop EF Core"
+};
+
+var renato = new Estudante()
 {
-    Console.WriteLine(ex.Message);
-}
+    Nome = "Renato",
+    Sobrenome = "Russo"
+};
+
+var matricula = new Matricula()
+{
+    Estudante = renato,
+    Curso = curso,
+    Data = DateTime.Now
+};
+
+// Adiciona o curso, o estudante e a matrícula em um comando só
+
+context.Matriculas.Add(matricula);
+
+context.SaveChanges();
+

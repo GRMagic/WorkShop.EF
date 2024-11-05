@@ -1,10 +1,9 @@
 ﻿namespace WorkShop.EF.Models
 {
-    public class Estudante
+    public class Curso
     {
         public int Id { get; set; }
         public string Nome { get; set; }
-        public string Sobrenome { get; set; }
 
         public ICollection<Matricula> Matriculas { get; set; }
     }
