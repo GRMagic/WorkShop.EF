@@ -168,3 +168,36 @@ using (var context = new EscolaContext())
     foreach (var item in resultado)
         Console.WriteLine($"{item.curso,-40} : {item.aluno, -20} : {item.matricula:M} : {item.conclusao:M}");
 }
+
+using (var context = new EscolaContext())
+{
+    var query = context.Estudantes
+        //.Where(e => e.Nome.Contains('a')) // Funciona em memória, mas o EF não sabe como traduzir
+        .Where(e => e.Nome.Contains("a") && e.Sobrenome.StartsWith("S")) // O EF sabe como traduzir para SQL
+        .OrderBy(e => e.Nome)
+        .Select(e => e.Nome);
+
+    var sql = query.ToQueryString();
+    Console.WriteLine(sql);
+
+    var nomes = query.ToList();
+
+    foreach (var nome in nomes)
+        Console.WriteLine(nome);
+}
+
+using (var context = new EscolaContext())
+{
+    var query = context.Estudantes
+        .Where(e => EF.Functions.Like(e.Nome.ToUpper(), "M%"))
+        .OrderBy(e => e.Nome)
+        .Select(e => e.Nome);
+
+    var sql = query.ToQueryString();
+    Console.WriteLine(sql);
+
+    var nomes = query.ToList();
+
+    foreach (var nome in nomes)
+        Console.WriteLine(nome);
+}
