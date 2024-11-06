@@ -9,5 +9,6 @@
 
         public Estudante Estudante { get; set; }
         public Curso Curso { get; set; }
+        public Certificado? Certificado { get; set; }
     }
 }

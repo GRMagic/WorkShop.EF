@@ -6,9 +6,9 @@ internal class MatriculaMapping : IEntityTypeConfiguration<Matricula>
 {
     public void Configure(EntityTypeBuilder<Matricula> builder)
     {
-        builder.Property(e => e.Data);
+        builder.Property(m => m.Data);
 
-        builder.HasOne(e => e.Estudante).WithMany(e => e.Matriculas).HasForeignKey(e => e.EstudanteId);
-        builder.HasOne(e => e.Curso).WithMany(e => e.Matriculas).HasForeignKey(e => e.CursoId);
+        builder.HasOne(m => m.Estudante).WithMany(e => e.Matriculas).HasForeignKey(m => m.EstudanteId);
+        builder.HasOne(m => m.Curso).WithMany(e => e.Matriculas).HasForeignKey(m => m.CursoId);
     }
 }
