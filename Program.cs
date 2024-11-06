@@ -22,7 +22,7 @@ context.SaveChanges();
 var estudantes = context.Estudantes.ToList();
 
 foreach (var estudante in estudantes)
-    Console.WriteLine($"Id: {estudante.Id}, Nome: {estudante.Nome} {estudante.Sobrenome}");
+    Console.WriteLine($"{estudante.Id:00}: {estudante.Nome} {estudante.Sobrenome}");
 
 // Atualização de um estudante
 
@@ -49,7 +49,7 @@ context.SaveChanges();
 //    var beltrano = new Estudante()
 //    {
 //        Nome = "Beltrano",
-//        Sobrenome = "De Tal",
+//        Sobrenome = "De Tal", 
 //    };
 //    context.Estudantes.Add(beltrano);
 //    var duplicado = new Estudante()
