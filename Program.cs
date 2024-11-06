@@ -201,3 +201,29 @@ using (var context = new EscolaContext())
     foreach (var nome in nomes)
         Console.WriteLine(nome);
 }
+
+// Fazendo parte da expressão rodar no banco e parte em memória
+using (var context = new EscolaContext())
+{
+    var noBanco = context.Estudantes.Select(e => new 
+    {
+        NomeCompleto = e.Nome + " " + e.Sobrenome 
+    }).ToList();
+
+    var naMemoria = context.Estudantes.ToList().Select(e => new
+    {
+        NomeCompleto = e.Nome + " " + e.Sobrenome
+    }).ToList();
+
+    var parteNoBancoParteNaMemoria = context.Estudantes.Select(e => new
+    {
+        NomeCompleto = e.Nome + " " + e.Sobrenome
+    }).ToList().Select(e => new
+    {
+        NomeCompleto = Maiusculo(e.NomeCompleto)
+    }).ToList();
+
+    static string Maiusculo(string nome) => nome.ToUpper();
+}
+
+
