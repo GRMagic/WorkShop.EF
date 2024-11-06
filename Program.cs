@@ -189,7 +189,7 @@ using (var context = new EscolaContext())
 using (var context = new EscolaContext())
 {
     var query = context.Estudantes
-        .Where(e => EF.Functions.Like(e.Nome.ToUpper(), "M%"))
+        .Where(e => EF.Functions.Like(e.Nome.ToUpper(), "M%") && e.Nome.Length > 5)
         .OrderBy(e => e.Nome)
         .Select(e => e.Nome);
 
