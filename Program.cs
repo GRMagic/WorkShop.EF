@@ -142,6 +142,19 @@ using (var context = new EscolaContext())
         }
         var salvas = context.SaveChanges();
         Console.WriteLine($"Foram salvos {salvas} certificados.");
+
+        // Inserindo alguns professores
+        {
+            var professores = new[]
+            {
+                new Professor { Nome = "João" },
+                new Professor { Nome = "Maria" },
+                new Professor { Nome = "José" },
+            };
+            context.Professores.AddRange(professores);
+            var salvos = context.SaveChanges();
+            Console.WriteLine($"Foram salvos {salvos} professores.");
+        }
     }
 }
 
@@ -227,3 +240,70 @@ using (var context = new EscolaContext())
 }
 
 
+// Atribuições NxN
+using(var context = new EscolaContext())
+{
+    var curso1 = context.Cursos.Find(1)!;
+    var professor1 = context.Professores.Find(1)!;
+    curso1.Professores.Add(professor1);
+    context.SaveChanges();
+
+    var curso2 = context.Cursos.Find(2)!;
+    var professor2 = context.Professores.Find(2)!;
+
+    professor2.Cursos.Add(curso1);
+    professor2.Cursos.Add(curso2);
+
+    context.SaveChanges();
+
+    curso1 = context.Cursos.Include(c => c.Professores).First(c => c.Id == 1);
+    professor1 = curso1.Professores.First(p => p.Id == 1);
+    curso1.Professores.Remove(professor1);
+
+    context.SaveChanges();
+
+    var curso3 = context.Cursos.Include(c => c.Professores).First(c => c.Id == 3);
+    var professor3 = context.Professores.First(p => p.Id == 3);
+    curso3.Professores.Add(professor3);
+
+    context.SaveChanges();
+
+    Console.WriteLine(new string('-',80));
+    Console.WriteLine("\nAlunos do professor 2:\n");
+
+    var alunosProfessor2 = context.Professores.Where(p => p.Id == 2)
+                                              .SelectMany(p => p.Cursos)
+                                              .SelectMany(c => c.Matriculas)
+                                              .Select(m => m.Estudante.Nome);
+
+    Console.WriteLine(alunosProfessor2.ToQueryString());
+    Console.WriteLine();
+    foreach (var aluno in alunosProfessor2)
+        Console.WriteLine(aluno);
+
+
+    Console.WriteLine(new string('-', 80));
+    Console.WriteLine("\nProfessores e seus alunos:\n");
+
+    var alunosPorProfessor = context.Professores
+                                    .Join(context.Cursos,
+                                          p => p.Id,
+                                          c => c.Professores.Select(p => p.Id).FirstOrDefault(),
+                                          (p, c) => new { Professor = p, Curso = c })
+                                    .Join(context.Matriculas,
+                                         pc => pc.Curso.Id,
+                                         m => m.CursoId,
+                                         (pc, m) => new { pc.Professor, pc.Curso, m.Estudante })
+                                    .Select(j => new
+                                    {
+                                        Professor = j.Professor.Nome,
+                                        Aluno = j.Estudante.Nome + " " + j.Estudante.Sobrenome
+                                    })
+                                    .OrderBy(j => j.Professor)
+                                    .ThenBy(j => j.Aluno);
+
+    Console.WriteLine(alunosPorProfessor.ToQueryString());
+    Console.WriteLine();
+    foreach (var par in alunosPorProfessor)
+        Console.WriteLine($"{par.Professor} -> {par.Aluno}");
+}

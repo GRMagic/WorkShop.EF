@@ -19,5 +19,6 @@ public class EscolaContext : DbContext
     public DbSet<Estudante> Estudantes { get; set; }
     public DbSet<Curso> Cursos { get; set; }
     public DbSet<Matricula> Matriculas { get; set; }
+    public DbSet<Professor> Professores { get; set; }
 
 }
