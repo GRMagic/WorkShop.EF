@@ -307,3 +307,87 @@ using(var context = new EscolaContext())
     foreach (var par in alunosPorProfessor)
         Console.WriteLine($"{par.Professor} -> {par.Aluno}");
 }
+
+
+// Exemplo de group by
+using (var context = new EscolaContext())
+{
+    Console.WriteLine(new string('-', 80));
+
+    var query = context.Matriculas
+        .GroupBy(m => new
+        {
+            m.CursoId,
+            m.Curso.Nome
+        })
+        .Select(g => new
+        {
+            Curso = g.Key.Nome,
+            Quantidade = g.Count()
+        });
+
+
+    var sql = query.ToQueryString();
+    Console.WriteLine(sql);
+    var resultado = query.ToList();
+
+    Console.WriteLine($"\n{"Nome do Curso",-40} : Quantidade de alunos");
+    foreach (var item in resultado)
+        Console.WriteLine($"{item.Curso, -40} : {item.Quantidade}");
+}
+
+using (var context = new EscolaContext())
+{
+    Console.WriteLine(new string('-', 80));
+    Console.WriteLine("\nAlunos por professor:");
+
+    var alunosDoProfessor = context.Professores
+                                   .Join(context.Cursos,
+                                         p => p.Id,
+                                         c => c.Professores.Select(p => p.Id).FirstOrDefault(),
+                                         (p, c) => new { Professor = p, Curso = c })
+                                   .Join(context.Matriculas,
+                                        pc => pc.Curso.Id,
+                                        m => m.CursoId,
+                                        (pc, m) => new { pc.Professor, pc.Curso, m.Estudante })
+                                   .Select(j => new
+                                   {
+                                       Professor = j.Professor.Nome,
+                                       Aluno = j.Estudante.Nome + " " + j.Estudante.Sobrenome
+                                   })
+                                   .OrderBy(j => j.Professor)
+                                   .ThenBy(j => j.Aluno)
+                                   .GroupBy(j => j.Professor)
+                                   .ToList();
+
+    foreach (var grupo in alunosDoProfessor)
+    {
+        Console.WriteLine($"\n{grupo.Key}");
+        foreach (var item in grupo)
+            Console.WriteLine($"\t{item.Aluno}");
+    }
+}
+
+using (var context = new EscolaContext())
+{
+    Console.WriteLine(new string('-', 80));
+    Console.WriteLine("\nAlunos por Curso:");
+
+    var alunosCurso = context.Matriculas
+        .Select(m => new 
+        {
+            Curso = m.Curso.Nome,
+            Aluno = m.Estudante.Nome + " " + m.Estudante.Sobrenome
+        })
+        .OrderBy(m => m.Curso)
+        .ThenBy(m => m.Aluno)
+        .GroupBy(m => m.Curso)
+        .ToList();
+
+    foreach (var grupo in alunosCurso)
+    {
+        Console.WriteLine($"\n{grupo.Key}");
+        foreach (var item in grupo)
+            Console.WriteLine($"\t{item.Aluno}");
+    }
+}
