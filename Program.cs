@@ -391,3 +391,44 @@ using (var context = new EscolaContext())
             Console.WriteLine($"\t{item.Aluno}");
     }
 }
+
+// Traking
+using (var context = new EscolaContext())
+{
+    var curso = context.Cursos.Find(3)!;
+    curso.Nome = "Workshop EF Core 8.0.0";
+    context.SaveChanges();
+}
+
+using (var context = new EscolaContext())
+{
+    context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+    var curso = context.Cursos.Find(3)!;
+    curso.Nome = "Workshop EF Core 8.0.1";
+    context.SaveChanges();
+}
+
+using (var context = new EscolaContext())
+{
+    context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+    var curso = context.Cursos.Find(3)!;
+    curso.Nome = "Workshop EF Core 8.0.2";
+    context.Update(curso);
+    context.SaveChanges();
+}
+
+using (var context = new EscolaContext())
+{
+    context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
+    var curso = context.Cursos.AsNoTracking().First(c => c.Id == 3);
+    curso.Nome = "Workshop EF Core 8.0.3";
+    context.SaveChanges();
+}
+
+using (var context = new EscolaContext())
+{
+    context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+    var curso = context.Cursos.AsTracking().First(c => c.Id == 3);
+    curso.Nome = "Workshop EF Core 8.0.x";
+    context.SaveChanges();
+}
