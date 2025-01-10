@@ -432,3 +432,16 @@ using (var context = new EscolaContext())
     curso.Nome = "Workshop EF Core 8.0.x";
     context.SaveChanges();
 }
+
+// Transaction
+using (var context = new EscolaContext())
+{
+    using var transacao = context.Database.BeginTransaction();
+
+    var curso = context.Cursos.First(c => c.Id == 3);
+    curso.Nome = "Workshop EF Core 9.0.0";
+    context.SaveChanges();
+
+    //transacao.Rollback();
+    transacao.Commit();
+}
